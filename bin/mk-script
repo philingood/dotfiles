@@ -1,0 +1,16 @@
+#!/bin/bash
+if [[ "$1" == "" ]]; then
+  echo "Usage: ${0##*/} <script-name>"
+  exit 2
+fi
+
+set -euo pipefail
+
+cat >$HOME/bin/$1 <<EOM
+#!/bin/bash
+set -euo pipefail
+
+EOM
+cd $HOME/bin/
+chmod +x $1
+$EDITOR $1

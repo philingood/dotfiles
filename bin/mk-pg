@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Проверка, передан ли аргумент
+if [ -z "$1" ]; then
+  echo "Ошибка: не указано имя директории."
+  echo "Использование: $0 <имя_директории>"
+  exit 1
+fi
+
+# Добавление префикса к имени сессии
+session_name="pg-$1"
+dir="$HOME/Developer/mon/playground/$1"
+
+# Проверка, существует ли сессия с таким именем
+if tmux has-session -t "$session_name" 2>/dev/null; then
+  read -p "Сессия с именем '$session_name' уже существует. Хотите подключиться к ней? (y/n) " choice
+  if [ "$choice" = "y" ]; then
+    tmux attach-session -t "$session_name"
+    exit 0
+  else
+    while true; do
+      read -p "Введите новое имя для сессии (будет добавлен 'pg-'): " new_session_name
+      new_session_name="pg-$new_session_name"
+      if tmux has-session -t "$new_session_name" 2>/dev/null; then
+        echo "Сессия с именем '$new_session_name' уже существует. Пожалуйста, введите другое имя."
+      else
+        session_name="$new_session_name"
+        dir="$HOME/Developer/mon/playground/${new_session_name#pg-}"
+        break
+      fi
+    done
+  fi
+fi
+
+# Создание директории с переданным именем
+mkdir -p "$dir"
+
+# Сообщение об успешном создании директории
+if [ $? -eq 0 ]; then
+  echo "Директория '$dir' успешно создана."
+else
+  echo "Ошибка при создании директории '$dir'."
+  exit 1
+fi
+
+cd "$dir"
+
+# Проверка, запущен ли скрипт внутри сессии tmux
+if [ -n "$TMUX" ]; then
+  # Если да, отключаемся от текущей сессии перед созданием новой
+  tmux new-session -d -s "$session_name" "nvim"
+  tmux detach-client
+  tmux attach-session -t "$session_name"
+else
+  # Если нет, просто создаем новую сессию и подключаемся к ней
+  tmux new-session -s "$session_name" "nvim"
+fi
