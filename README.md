@@ -1,6 +1,6 @@
 # Dotfiles
 
-This repository contains my configuration files. Depending on the machine, two installation methods are used: `stow` or `home-manager`.
+Depending on the machine, two installation methods are used: `stow` or `home-manager`.
 
 ## Installation
 
