@@ -1,0 +1,59 @@
+# ~~~~ ALIASES ~~~~~~~~~~~~~~~~~~~~~~~~
+
+# config
+alias zc="\$EDITOR ~/.zshrc"
+alias zs="source ~/.zshrc"
+alias sc="\$EDITOR ~/.ssh/config"
+alias aliasc="\$EDITOR ~/.aliases"
+alias vc="\$EDITOR ~/.vimrc"
+alias tc="\$EDITOR ~/.config/tmux/tmux.conf"
+
+# scripts
+alias ms="make-script"
+
+# DIRS
+alias cpwd="pwd | tr -d '\n' | pbcopy && echo 'pwd copied to clipboard'"
+alias li="ls -lah | grep"
+alias le="ls -lah | grep -v"
+
+# APPS
+alias libre="nohup proxychains4 /Applications/LibreWolf.app/Contents/MacOS/librewolf > /dev/null 2>&1 &"
+alias k="kubectl --kubeconfig /Users/hacker/Library/Mobile\ Documents/com~apple~CloudDocs/icloud\ WALK/kube/kubecfg.ldap.yaml"
+
+# CLI
+alias nf="neofetch"
+alias of="onefetch"
+
+alias proxy="proxychains4"
+
+balias wu="sudo wg-quick up $HOME/.config/wg/**"
+balias wd="sudo wg-quick down $HOME/.config/wg/**"
+
+# yazi
+alias o="yazi"
+alias oicdl="yazi $CLOUDDOWNLOADS"
+alias odl="yazi ~/Downloads/"
+alias oic="yazi $ICLOUD_DIR"
+alias od="yazi $DEV_DIR"
+alias onc="yazi $NEXTCLOUD_DIR"
+alias o1d="yazi $ONEDRIVE_DIR"
+
+# vi
+alias v=\$EDITOR
+alias vimf="vim \$(fzf)"
+
+alias t="tmux"
+alias tl="tmux ls"
+alias tt="tmux new -t"
+
+# git
+alias lg="lazygit"
+ialias gc="git clone"
+
+# python
+alias p="python"
+alias ca="conda activate"
+alias cau="conda activate unienv"
+alias uv="conda activate unienv && nvim"
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
