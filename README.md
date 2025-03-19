@@ -14,4 +14,4 @@ Run the setup script:
 
 ### Using home-manager
 
-This repository is used as a Git submodule in my [nix-config](https://github.com/philingood/nix-config), where all machine configurations (NixOS, macOS) are defined. The installation is managed through Nix flakes.
+This repository is used as a Git submodule in [nix-config](https://github.com/philingood/nix-config), where all machine configurations (NixOS, macOS) are defined. The installation is managed through Nix flakes.
