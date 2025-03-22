@@ -1,0 +1,4 @@
+theme = rose-pine
+font_size = 16
+macos-titlebar-style = tabs
+macos-option-as-alt = true
