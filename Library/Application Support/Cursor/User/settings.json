@@ -5,13 +5,18 @@
     "editor.lineNumbers": "relative",
     "editor.smoothScrolling": true,
     "files.autoSave": "afterDelay",
+    "terminal.integrated.fontSize": 15,
     "window.commandCenter": false,
     "workbench.colorTheme": "Kanagawa",
     "workbench.colorCustomizations": {
-        "titleBar.activeBackground": "#ff0000",
-        "titleBar.activeForeground": "#ffffff"
+        "titleBar.activeBackground": "#16161D",
+        // "titleBar.activeForeground": "#ffffff"
     },
     "workbench.editor.editorActionsLocation": "titleBar",
     "workbench.editor.showTabs": "none",
     "workbench.layoutControl.enabled": false,
+    "editor.accessibilitySupport": "off",
+    "extensions.experimental.affinity": {
+        "asvetliakov.vscode-neovim": 1
+    },
 }
