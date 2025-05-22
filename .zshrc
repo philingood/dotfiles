@@ -39,7 +39,6 @@ export NVM_DIR="$HOME/.nvm"
   [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 export HOMEBREW_NO_AUTO_UPDATE=1
-export NIX_CONF_DIR='/Users/hacker/dotfiles/.config/nix-darwin/'
 
 export ICLOUD_DIR='$HOME/Library/Mobile\ Documents/com~apple~CloudDocs'
 export DEV_DIR='$HOME/Developer'
@@ -47,18 +46,10 @@ export ONEDRIVE_DIR='$HOME/OneDrive\ -\ wpt.medfordmemorial.org/'
 export CLOUDDOWNLOADS_DIR='$HOME/Library/Mobile\ Documents/com~apple~CloudDocs/Downloads'
 export NEXTCLOUD_DIR='$HOME/Nextcloud'
 
-export GITLAB_HOME='/Users/hacker/Developer/mon/pet/gitlab/'
 
-export PATH="/Users/hacker/Applications/whisper.cpp/bin:$PATH"
-export PATH="/Users/hacker/bin:$PATH"
+export PATH="$HOME/Applications/whisper.cpp/bin:$PATH"
+export PATH="$HOME/bin:$PATH"
 
-
-# WALK
-# go env
-export GOPATH=$HOME/go
-export GONOSUMDB="gitlab.c2g.pw"
-export GOPROXY=""
-export GOPRIVATE="gitlab.c2g.pw"
 
 
 # SOURCES
