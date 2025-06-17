@@ -1,26 +1,29 @@
 {
+    "cursor.cpp.disabledLanguages": [
+        "plaintext"
+    ],
+    "editor.accessibilitySupport": "off",
     "editor.cursorBlinking": "solid",
     "editor.cursorSmoothCaretAnimation": "on",
     "editor.fontSize": 15,
     "editor.lineNumbers": "relative",
     "editor.smoothScrolling": true,
-    "files.autoSave": "afterDelay",
-    "terminal.integrated.fontSize": 15,
-    "window.commandCenter": false,
-    "workbench.colorTheme": "Kanagawa",
-    "workbench.colorCustomizations": {
-        "titleBar.activeBackground": "#16161D",
-        // "titleBar.activeForeground": "#ffffff"
-    },
-    "workbench.editor.editorActionsLocation": "titleBar",
-    "workbench.editor.showTabs": "none",
-    "workbench.layoutControl.enabled": false,
-    "editor.accessibilitySupport": "off",
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
     "extensions.experimental.affinity": {
         "asvetliakov.vscode-neovim": 1
     },
-    "explorer.confirmDelete": false,
-    "cursor.cpp.disabledLanguages": [
-        "plaintext"
-    ],
+    "files.autoSave": "afterDelay",
+    "terminal.integrated.fontFamily": "MesloLGLDZ Nerd Font",
+    "terminal.integrated.fontSize": 15,
+    "window.commandCenter": false,
+    "workbench.colorCustomizations": {
+        "titleBar.activeBackground": "#1F1F28"
+        // "titleBar.activeForeground": "#ffffff",
+    },
+    "workbench.colorTheme": "Kanagawa",
+    "workbench.editor.editorActionsLocation": "titleBar",
+    "workbench.editor.showTabs": "none",
+    "workbench.layoutControl.enabled": false,
+    "workbench.statusBar.visible": false
 }
