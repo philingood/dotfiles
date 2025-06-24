@@ -1,8 +1,10 @@
 # Dotfiles
 
-Depending on the machine, two installation methods are used: `stow` or `home-manager`.
+Configuration files with the settings of the applications I use.
 
 ## Installation
+
+Depending on the machine, two installation methods are used: `stow` or `home-manager`.
 
 ### Using GNU Stow
 
