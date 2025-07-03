@@ -2,6 +2,7 @@
 --ignore='.config'
 --ignore='.DS_Store'
 --ignore='.git'
+--ignore='.github'
 --ignore='.gitignore'
 --ignore='.inputrc'
 --ignore='.skhdrc'
