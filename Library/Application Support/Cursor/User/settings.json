@@ -25,5 +25,6 @@
     "workbench.editor.editorActionsLocation": "titleBar",
     "workbench.editor.showTabs": "none",
     "workbench.layoutControl.enabled": false,
-    "workbench.statusBar.visible": false
+    "workbench.statusBar.visible": false,
+    "extensions.ignoreRecommendations": true
 }
