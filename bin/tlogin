@@ -1,0 +1,179 @@
+#!/usr/bin/env bash
+# tsh login without typing the password and OTP code by hand.
+# Password and TOTP secret live in macOS Keychain, proxy and user in a config file.
+#
+#   tlogin --setup   once: ask for proxy/user, store password and TOTP secret
+#                    (typed in or imported from Bitwarden)
+#   tlogin           log in
+#   tlogin --otp     print the current OTP code
+
+set -euo pipefail
+
+SERVICE=tsh-login
+CONFIG=${XDG_CONFIG_HOME:-$HOME/.config}/tlogin/config
+
+die() {
+  echo "$*" >&2
+  exit 1
+}
+
+secret() {
+  security find-generic-password -s "$SERVICE" -a "$1" -w 2>/dev/null ||
+    die "No '$1' in Keychain, run: ${0##*/} --setup"
+}
+
+store() {
+  # The value is briefly visible in ps: security has no way to read it from stdin
+  security add-generic-password -U -s "$SERVICE" -a "$1" -w "$2"
+}
+
+# ask <prompt> [suggestion]: read a line, empty answer means the suggestion
+ask() {
+  local answer
+  read -rp "$1${2:+ [$2]}: " answer
+  echo "${answer:-${2:-}}"
+}
+
+# Value from the current tsh profile, used only as a suggestion in setup
+profile_value() {
+  local profile
+  profile=$(cat ~/.tsh/current-profile 2>/dev/null) || return 0
+  sed -n "s/^$1: //p" ~/.tsh/"$profile".yaml 2>/dev/null
+}
+
+# Sets BW_PASS, BW_USER, BW_TOTP from a Bitwarden item the user picks
+bw_import() {
+  local bw=(bw) status server items n
+  # No bw installed: run it from nixpkgs, setup is a one-off anyway
+  command -v bw >/dev/null || bw=(nix shell nixpkgs#bitwarden-cli -c bw)
+
+  read -r status server < <("${bw[@]}" status | python3 -c '
+import json, sys
+d = json.load(sys.stdin)
+print(d["status"], d.get("serverUrl") or "")
+')
+
+  if [[ $status == locked ]]; then
+    echo "Unlocking Bitwarden:"
+    if ! BW_SESSION=$("${bw[@]}" unlock --raw); then
+      # A login saved by an older bw can fail to unlock in a newer one
+      # ("Master password unlock data is required"), logging in again fixes it
+      [[ $(ask "Unlock failed. Log out of bw and log in again? (y/N)") == [yY]* ]] || exit 1
+      "${bw[@]}" logout >/dev/null
+      status=unauthenticated
+    fi
+  fi
+
+  if [[ $status == unauthenticated ]]; then
+    server=$(ask "Bitwarden server URL" "${server:-https://vault.bitwarden.com}")
+    "${bw[@]}" config server "$server" >/dev/null
+    echo "Logging in to Bitwarden (email, master password, 2FA):"
+    BW_SESSION=$("${bw[@]}" login --raw) ||
+      die "Bitwarden login failed. Run setup again and answer N to enter the secrets by hand."
+  fi
+  export BW_SESSION
+  "${bw[@]}" sync >/dev/null
+
+  items=$("${bw[@]}" list items --search "$(ask "Search Bitwarden for" teleport)")
+  python3 -c '
+import json, sys
+items = json.load(sys.stdin)
+if not items:
+    sys.exit("Nothing found")
+for i, it in enumerate(items, 1):
+    login = it.get("login") or {}
+    print("%d) %s  (%s%s)" % (i, it["name"], login.get("username") or "-",
+                             ", has TOTP" if login.get("totp") else ""))
+' <<<"$items"
+  n=$(ask "Item number" 1)
+
+  # Fields come out NUL-separated so any characters survive
+  {
+    IFS= read -rd '' BW_PASS
+    IFS= read -rd '' BW_USER
+    IFS= read -rd '' BW_TOTP
+  } < <(python3 -c '
+import json, sys
+login = json.load(sys.stdin)[int(sys.argv[1]) - 1].get("login") or {}
+for key in ("password", "username", "totp"):
+    sys.stdout.write((login.get(key) or "") + "\0")
+' "$n" <<<"$items")
+}
+
+setup() {
+  local pass="" totp="" user_hint="" proxy user
+  BW_PASS="" BW_USER="" BW_TOTP=""
+
+  if [[ $(ask "Import password and TOTP from Bitwarden? (y/N)") == [yY]* ]]; then
+    bw_import
+    pass=$BW_PASS totp=$BW_TOTP user_hint=$BW_USER
+    [[ -n $totp ]] || echo "The item has no TOTP, enter it by hand."
+  fi
+
+  proxy=$(ask "Teleport proxy (host:port)" "$(profile_value web_proxy_addr)")
+  user=$(ask "Teleport user" "${user_hint:-$(profile_value user)}")
+  [[ -n $proxy && -n $user ]] || die "Proxy and user are required"
+
+  [[ -n $pass ]] || { read -rsp "Teleport password: " pass && echo; }
+  [[ -n $totp ]] || { read -rsp "TOTP secret (base32 or otpauth:// URI): " totp && echo; }
+  [[ -n $pass && -n $totp ]] || die "Password and TOTP secret are required"
+
+  store password "$pass"
+  store totp "$totp"
+  mkdir -p "${CONFIG%/*}"
+  printf 'PROXY=%q\nTELEPORT_USER=%q\n' "$proxy" "$user" >"$CONFIG"
+
+  echo "Saved. Current OTP: $("$0" --otp) (should match your authenticator app)"
+}
+
+case "${1:-}" in
+  --setup)
+    setup
+    ;;
+
+  --otp)
+    # Less than 3 s left in the window: wait for the next code so it doesn't expire on the way
+    TOTP_SECRET=$(secret totp) python3 - <<'EOF'
+import base64, hashlib, hmac, os, struct, time
+from urllib.parse import parse_qs, urlparse
+
+s = os.environ["TOTP_SECRET"].strip()
+if s.startswith("otpauth://"):
+    s = parse_qs(urlparse(s).query)["secret"][0]
+s = s.replace(" ", "").upper()
+key = base64.b32decode(s + "=" * (-len(s) % 8))
+if 30 - time.time() % 30 < 3:
+    time.sleep(30 - time.time() % 30 + 0.1)
+h = hmac.new(key, struct.pack(">Q", int(time.time()) // 30), hashlib.sha1).digest()
+o = h[-1] & 0x0F
+print("%06d" % ((struct.unpack(">I", h[o:o + 4])[0] & 0x7FFFFFFF) % 1000000))
+EOF
+    ;;
+
+  "")
+    [[ -f $CONFIG ]] || die "No config, run: ${0##*/} --setup"
+    # shellcheck source=/dev/null
+    source "$CONFIG"
+    # Secrets and paths go through env, not arguments
+    # shellcheck disable=SC2153 # PROXY comes from the config
+    TSH_PASS=$(secret password) SELF=$0 PROXY=$PROXY TELEPORT_USER=$TELEPORT_USER expect <<'EOF'
+set timeout 60
+# Otherwise tsh sends the terminal queries (background color, cursor position);
+# expect never reads the replies and they end up as garbage in the shell
+set env(TERM) dumb
+spawn tsh login --proxy=$env(PROXY) --user=$env(TELEPORT_USER) --auth=local --mfa-mode=otp
+expect {
+  -re {(?i)password[^\n]*:} { send -- "$env(TSH_PASS)\r"; exp_continue }
+  -re {(?i)(otp|code)[^\n]*:} { send -- "[exec $env(SELF) --otp]\r"; exp_continue }
+  timeout { puts stderr "\ntsh login: timed out"; exit 1 }
+  eof
+}
+exit [lindex [wait] 3]
+EOF
+    ;;
+
+  *)
+    echo "Usage: ${0##*/} [--setup | --otp]"
+    exit 2
+    ;;
+esac
