@@ -10,9 +10,6 @@
     "editor.smoothScrolling": true,
     "explorer.confirmDelete": false,
     "explorer.confirmDragAndDrop": false,
-    "extensions.experimental.affinity": {
-        "asvetliakov.vscode-neovim": 1
-    },
     "files.autoSave": "afterDelay",
     "terminal.integrated.fontFamily": "MesloLGLDZ Nerd Font",
     "terminal.integrated.fontSize": 15,
@@ -25,6 +22,6 @@
     "workbench.editor.editorActionsLocation": "titleBar",
     "workbench.editor.showTabs": "none",
     "workbench.layoutControl.enabled": false,
-    "workbench.statusBar.visible": false,
-    "extensions.ignoreRecommendations": true
+    "extensions.ignoreRecommendations": true,
+    "window.autoDetectColorScheme": false
 }

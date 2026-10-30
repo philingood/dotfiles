@@ -1,3 +1,22 @@
+-- yet another way to paste
+-- hs.hotkey.bind({ "cmd", "alt", "ctrl" }, "V", function()
+-- 	local text = hs.pasteboard.getContents()
+-- 	if text then
+-- 		hs.eventtap.keyStrokes(text)
+-- 	end
+-- end)
+
+-- some better way to paste
+-- hs.hotkey.bind({ "cmd", "alt", "ctrl" }, "V", function()
+-- 	local text = hs.pasteboard.getContents()
+-- 	if text then
+-- 		for c in text:gmatch(".") do
+-- 			hs.eventtap.keyStrokes(c)
+-- 			hs.timer.usleep(2000) -- маленькая пауза, 2 мс, чтобы Citrix не "глотал" символы
+-- 		end
+-- 	end
+-- end)
+
 -- Латиница + цифры + пробел + enter
 local keyCodeMap = {
 	a = 0,
