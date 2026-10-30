@@ -1,15 +1,2 @@
---ignore='.aliases'
---ignore='.config'
---ignore='.DS_Store'
---ignore='.git'
---ignore='.github'
---ignore='.gitignore'
---ignore='.inputrc'
---ignore='.skhdrc'
---ignore='.stowrc'
---ignore='.tmux.conf'
---ignore='.vimrc'
---ignore='.yabairc'
---ignore='.zshrc'
---ignore='README.md'
---ignore='setup.sh'
+--target=~
+--ignore=\.DS_Store

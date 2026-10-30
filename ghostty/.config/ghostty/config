@@ -1,0 +1,9 @@
+theme = Rose Pine
+background = #272626
+font-size = 14
+macos-titlebar-style = tabs
+macos-option-as-alt = true
+background-opacity = 0.6
+background-blur-radius = 20
+shell-integration = zsh
+
