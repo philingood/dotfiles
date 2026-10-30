@@ -21,6 +21,6 @@ echo "Открытый ключ: $KEY_PATH.pub"
 echo "Приватный ключ: $KEY_PATH"
 
 # Копируем публичный ключ `.pub` ключ в переменную
-export PUBKEY=$(<~/.ssh/$NAME_SSH_KEY.pub)
+PUBKEY=$(<~/.ssh/$NAME_SSH_KEY.pub)
 # и далее копируем команду для добавления ключа на сервере , и выполняем ее на сервере.
 echo "mkdir -p ~/.ssh/; echo '$PUBKEY' >> ~/.ssh/authorized_keys" | pbcopy
