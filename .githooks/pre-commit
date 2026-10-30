@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Refuse to commit secrets: the repo is public.
+# Enable once per clone: git config core.hooksPath .githooks
+
+set -euo pipefail
+
+if command -v gitleaks >/dev/null; then
+  gitleaks git --pre-commit --staged --redact --no-banner
+else
+  nix shell nixpkgs#gitleaks -c gitleaks git --pre-commit --staged --redact --no-banner
+fi

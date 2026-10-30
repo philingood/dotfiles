@@ -12,6 +12,12 @@ Clone to `~/dotfiles` (the path is assumed by both methods below):
 git clone https://github.com/philingood/dotfiles.git ~/dotfiles
 ```
 
+The repo is public, so enable the pre-commit hook that blocks secrets (gitleaks):
+
+```sh
+git -C ~/dotfiles config core.hooksPath .githooks
+```
+
 ### Machines with nix-config
 
 [nix-config](https://github.com/philingood/nix-config) (home-manager) links the packages it needs straight to this clone, so edits apply without a rebuild. Nothing to run here, and `setup.sh` refuses to run on such machines.
